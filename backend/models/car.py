@@ -1,81 +1,8 @@
-from typing import Optional, List
+from typing import Optional
 from pydantic import BaseModel, Field, ConfigDict
+from fastapi import APIRouter
 
-
-class CarListing(BaseModel):
-    title: str = Field(
-        ...,
-        description="Headline title of the car listing",
-        examples=["2015 Honda Civic LX"],
-    )
-    price: float = Field(
-        ...,
-        ge=0,
-        description="Asking price in USD",
-        examples=[8500.0],
-    )
-    year: Optional[int] = Field(
-        default=None,
-        ge=1900,
-        description="Model manufacturing year",
-        examples=[2015],
-    )
-    make: Optional[str] = Field(
-        default=None,
-        description="Car make or manufacturer",
-        examples=["Honda"],
-    )
-    model: Optional[str] = Field(
-        default=None,
-        description="Car model name",
-        examples=["Civic"],
-    )
-    mileage: Optional[int] = Field(
-        default=None,
-        ge=0,
-        description="Odometer mileage reading in miles",
-        examples=[95000],
-    )
-    location: Optional[str] = Field(
-        default=None,
-        description="City and state where the vehicle is located",
-        examples=["New York, NY"],
-    )
-    description: Optional[str] = Field(
-        default="Clean title, well-maintained vehicle in good running condition.",
-        description="Seller notes or listing description",
-        examples=["Clean title, single owner, regular maintenance, excellent condition."],
-    )
-
-    model_config = ConfigDict(
-        json_schema_extra={
-            "examples": [
-                {
-                    "title": "2015 Honda Civic LX",
-                    "price": 8500.0,
-                    "year": 2015,
-                    "make": "Honda",
-                    "model": "Civic",
-                    "mileage": 95000,
-                    "location": "New York, NY",
-                    "description": "Clean title, single owner, regular maintenance, excellent condition.",
-                }
-            ]
-        }
-    )
-
-
-# Ready-to-use sample car listing for testing and demonstration
-SAMPLE_CAR_LISTING = CarListing(
-    title="2015 Honda Civic LX",
-    price=8500.0,
-    year=2015,
-    make="Honda",
-    model="Civic",
-    mileage=95000,
-    location="New York, NY",
-    description="Clean title, single owner, regular maintenance, excellent condition.",
-)
+router = APIRouter()
 
 
 class CarSearchQuery(BaseModel):
@@ -124,6 +51,11 @@ class CarSearchQuery(BaseModel):
         description="City, state, or region to search within",
         examples=["New York, NY"],
     )
+    zip_code: Optional[str] = Field(
+        default=None,
+        description="5-digit ZIP code to center the search around",
+        examples=["10001"],
+    )
     transmission: Optional[str] = Field(
         default=None,
         description="Transmission type (e.g., Automatic, Manual)",
@@ -142,6 +74,7 @@ class CarSearchQuery(BaseModel):
                     "max_year": 2020,
                     "max_mileage": 100000,
                     "location": "New York, NY",
+                    "zip_code": "10001",
                     "transmission": "Automatic",
                 }
             ]
@@ -159,10 +92,20 @@ SAMPLE_CAR_SEARCH_QUERY = CarSearchQuery(
     max_year=2020,
     max_mileage=100000,
     location="New York, NY",
+    zip_code="10001",
     transmission="Automatic",
 )
 
 
 
-print("CarSearchQuery schema:", CarSearchQuery.model_json_schema())
+
+@router.post("/search")
+async def search_cars(query: CarSearchQuery):
+    create_user_preference = query.model_dump()
+
+
+    return create_user_preference
+
+    
+    
     
