@@ -11,7 +11,7 @@ google_api_key = os.getenv("GOOGLE_API_KEY")
 if google_api_key:
     print(f"Google API Key exists and begins {google_api_key[:2]}")
 else:
-    print("Google API Key not set (and this is optional)")
+    print("Google API Key not set")
 
 GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 
