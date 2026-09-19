@@ -1,9 +1,28 @@
 import asyncio
 import os
 from dotenv import load_dotenv
-from agents import Agent, Runner, function_tool
+from agents import Agent, OpenAIChatCompletionsModel, Runner, function_tool
+from openai import AsyncOpenAI
 
 load_dotenv()
+
+google_api_key = os.getenv("GOOGLE_API_KEY")
+
+if google_api_key:
+    print(f"Google API Key exists and begins {google_api_key[:2]}")
+else:
+    print("Google API Key not set (and this is optional)")
+
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+gemini_client = AsyncOpenAI(
+    base_url=GEMINI_BASE_URL,
+    api_key=google_api_key,
+)
+gemini_model = OpenAIChatCompletionsModel(
+    model="gemini-2.5-flash",
+    openai_client=gemini_client,
+)
 
 # 1. Orchestra Conductor
 conductor_agent = Agent(
