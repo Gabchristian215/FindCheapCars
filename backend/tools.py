@@ -2,43 +2,72 @@ import requests
 from bs4 import BeautifulSoup
 from agents import function_tool
 
-location = input("Enter the location to search for cars: ")
-maxYear = int(input("Enter the maximum year of the car: "))
-maxPrice = int(input("Enter the maximum price of the car: "))
-model = input("Enter the model of the car: ")
-make = input("Enter the make of the car: ")
 
-url = f"https://www.craigslist.org/search/area/{location}?auto_make_model={model}%20{make}&cat=cta&max_auto_year={maxYear}&max_price={maxPrice}#search=2~gallery~0"
-url2 = "https://www.craigslist.org/search/area/newyork?cat=cta#search=2~gallery~0" # test web page
+@function_tool
+def search_craigslist_cars(
+    location: str,
+    make: str,
+    model: str,
+    max_year: int,
+    max_price: int,
+    max_results: int = 20,
+) -> list[dict[str, str]]:
+    """Search Craigslist for cars matching a user's criteria.
 
-response = requests.get(url2)
-html = response.text
+    Args:
+        location: Craigslist area slug, such as ``newyork`` or ``sfbay``.
+        make: Vehicle manufacturer, such as ``Honda``.
+        model: Vehicle model, such as ``Civic``.
+        max_year: Latest acceptable model year.
+        max_price: Maximum acceptable price in US dollars.
+        max_results: Maximum number of listings to return.
 
-soup = BeautifulSoup(html, "lxml")
+    Returns:
+        Matching listings with their title, price, location, and URL.
+    """
+    if max_results < 1:
+        return []
 
-print(soup)
+    url = f"https://www.craigslist.org/search/area/{location.strip()}"
+    response = requests.get(
+        url,
+        params={
+            "auto_make_model": f"{make} {model}".strip(),
+            "cat": "cta",
+            "max_auto_year": max_year,
+            "max_price": max_price,
+        },
+        headers={"User-Agent": "FindCheapCars/0.1"},
+        timeout=15,
+    )
+    response.raise_for_status()
 
-results = soup.find_all("li", class_="cl-static-search-result")
+    soup = BeautifulSoup(response.text, "html.parser")
+    listings: list[dict[str, str]] = []
 
-for result in results:
-    title = result.find("div", class_="title").text
-    price = result.find("div", class_="price").text
-    location = result.find("div", class_="location").text
-    link = result.find("a")["href"]
+    for result in soup.find_all("li", class_="cl-static-search-result"):
+        title = result.find("div", class_="title")
+        price = result.find("div", class_="price")
+        listing_location = result.find("div", class_="location")
+        link = result.find("a")
 
-    if price:
-        price = result.find("div", class_="price").text
-    else:
-        price = "No Price"
+        if title is None or link is None or not link.get("href"):
+            continue
 
+        listings.append(
+            {
+                "title": title.get_text(strip=True),
+                "price": price.get_text(strip=True) if price else "No Price",
+                "location": (
+                    listing_location.get_text(strip=True)
+                    if listing_location
+                    else "Unknown"
+                ),
+                "url": str(link["href"]).strip(),
+            }
+        )
 
-    print("Title: ", title.strip())
-    print("Price: ", price.strip())
-    print("Location: ", location.strip())
-    print("Link: ", link.strip())
-    print("\n")
+        if len(listings) >= max_results:
+            break
 
-
-
-
-
+    return listings
