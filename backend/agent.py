@@ -1,7 +1,7 @@
-import asyncio
 import os
+
 from dotenv import load_dotenv
-from agents import Agent, OpenAIChatCompletionsModel, Runner, function_tool
+from agents import Agent, OpenAIChatCompletionsModel
 from openai import AsyncOpenAI
 
 load_dotenv()
@@ -24,19 +24,7 @@ gemini_model = OpenAIChatCompletionsModel(
     openai_client=gemini_client,
 )
 
-# 1. Orchestra Conductor
-conductor_agent = Agent(
-    name="Orchestra Conductor",
-    instructions=(
-        "You are the orchestra conductor. Your job is to orchestrate and coordinate "
-        "the workflow among the specialized car search agents: Watcher, Matcher, Advisor, "
-        "and Notifier. Manage the full pipeline from finding listings, filtering them against "
-        "user preferences, scoring and mechanical evaluation, to delivering notifications."
-    ),
-    model=gemini_model,
-)
-
-# 2. Watcher
+# 1. Watcher
 watcher_agent = Agent(
     name="Watcher",
     instructions=(
@@ -47,7 +35,7 @@ watcher_agent = Agent(
     model=gemini_model,
 )
 
-# 3. Matcher
+# 2. Matcher
 matcher_agent = Agent(
     name="Matcher",
     instructions=(
@@ -58,7 +46,7 @@ matcher_agent = Agent(
     model=gemini_model,
 )
 
-# 4. Advisor
+# 3. Advisor
 advisor_agent = Agent(
     name="Advisor",
     instructions=(
@@ -70,7 +58,7 @@ advisor_agent = Agent(
     model=gemini_model,
 )
 
-# 5. Notifier
+# 4. Notifier
 notifier_agent = Agent(
     name="Notifier",
     instructions=(
@@ -78,6 +66,40 @@ notifier_agent = Agent(
         "Deliver clear, direct, and formatted alerts and summaries to users without any conversational personality."
     ),
     model=gemini_model,
+)
+
+watcher_tool = watcher_agent.as_tool(
+    tool_name="car_listing_watcher",
+    tool_description=(
+        "Find and collect new car listings from Craigslist or Facebook Marketplace."
+    ),
+)
+matcher_tool = matcher_agent.as_tool(
+    tool_name="car_listing_matcher",
+    tool_description="Filter car listings against the user's vehicle preferences.",
+)
+advisor_tool = advisor_agent.as_tool(
+    tool_name="car_mechanical_advisor",
+    tool_description=(
+        "Score car listings and evaluate reliability, mechanical risks, and specifications."
+    ),
+)
+notifier_tool = notifier_agent.as_tool(
+    tool_name="car_listing_notifier",
+    tool_description="Create clear alerts and summaries for approved car listings.",
+)
+
+# 5. Orchestra Conductor
+conductor_agent = Agent(
+    name="Orchestra Conductor",
+    instructions=(
+        "You are the orchestra conductor. Your job is to orchestrate and coordinate "
+        "the workflow among the specialized car search agents: Watcher, Matcher, Advisor, "
+        "and Notifier. Manage the full pipeline from finding listings, filtering them against "
+        "user preferences, scoring and mechanical evaluation, to delivering notifications."
+    ),
+    model=gemini_model,
+    tools=[watcher_tool, matcher_tool, advisor_tool, notifier_tool],
 )
 
 # Aliases
