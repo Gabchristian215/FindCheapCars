@@ -1,44 +1,43 @@
+from openai.types.responses import response_format_text_json_schema_config
 import requests
 from bs4 import BeautifulSoup
 from agents import function_tool
 
-location = input("Enter the location to search for cars: ")
-maxYear = int(input("Enter the maximum year of the car: "))
-maxPrice = int(input("Enter the maximum price of the car: "))
-model = input("Enter the model of the car: ")
-make = input("Enter the make of the car: ")
 
-url = f"https://www.craigslist.org/search/area/{location}?auto_make_model={model}%20{make}&cat=cta&max_auto_year={maxYear}&max_price={maxPrice}#search=2~gallery~0"
-url2 = "https://www.craigslist.org/search/area/newyork?cat=cta#search=2~gallery~0" # test web page
 
-response = requests.get(url2)
-html = response.text
+@function_tool
+def ScrapeCar(location: str, maxYear: int, maxPrice: int, model: str, make: str):
+    url = f"https://www.craigslist.org/search/area/{location}?auto_make_model={model}%20{make}&cat=cta&max_auto_year={maxYear}&max_price={maxPrice}#search=2~gallery~0"
+   
 
-soup = BeautifulSoup(html, "lxml")
+    response = requests.get(url)
+    html = response.text
 
-print(soup)
+    soup = BeautifulSoup(html, "lxml")
 
-results = soup.find_all("li", class_="cl-static-search-result")
+    print(soup)
 
-for result in results:
-    title = result.find("div", class_="title").text
-    price = result.find("div", class_="price").text
-    location = result.find("div", class_="location").text
-    link = result.find("a")["href"]
+    results = soup.find_all("li", class_="cl-static-search-result")
 
-    if price:
+    for result in results:
+        title = result.find("div", class_="title").text
         price = result.find("div", class_="price").text
-    else:
-        price = "No Price"
+        location = result.find("div", class_="location").text
+        link = result.find("a")["href"]
+
+        if price:
+            price = result.find("div", class_="price").text
+        else:
+            price = "No Price"
+
+        print("Title: ", title.strip())
+        print("Price: ", price.strip())
+        print("Location: ", location.strip())
+        print("Link: ", link.strip())
+        print("\n")
 
 
-    print("Title: ", title.strip())
-    print("Price: ", price.strip())
-    print("Location: ", location.strip())
-    print("Link: ", link.strip())
-    print("\n")
 
 
 
-
-
+#print(ScrapeCar.params_json_schema)

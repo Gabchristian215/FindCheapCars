@@ -1,8 +1,16 @@
+import asyncio
+from agents import result
 import os
 
 from dotenv import load_dotenv
-from agents import Agent, OpenAIChatCompletionsModel
+from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
+from tools import ScrapeCar
+from instructions.watcher import watcher_instruction
+from instructions.matcher import matcher_instruction
+from instructions.advisor import advisor_instruction
+from instructions.notifier import notifier_instruction
+from instructions.conductor import conductor_instruction
 
 load_dotenv()
 
@@ -20,51 +28,36 @@ gemini_client = AsyncOpenAI(
     api_key=google_api_key,
 )
 gemini_model = OpenAIChatCompletionsModel(
-    model="gemini-2.5-flash",
+    model="gemini-3.5-flash",
     openai_client=gemini_client,
 )
 
 # 1. Watcher
 watcher_agent = Agent(
     name="Watcher",
-    instructions=(
-        "You are the Watcher. Your job is to find new car listings from Craigslist "
-        "or Facebook Marketplace. Strictly search, extract, and collect new vehicle listings "
-        "without any conversational personality."
-    ),
+    instructions=watcher_instruction,
     model=gemini_model,
+    tools=[ScrapeCar]
 )
 
 # 2. Matcher
 matcher_agent = Agent(
     name="Matcher",
-    instructions=(
-        "You are the Matcher. Your job is to filter car listings against user preferences "
-        "(such as price, make, model, year, mileage, and location). Strictly evaluate criteria "
-        "and filter listings without any conversational personality."
-    ),
+    instructions=matcher_instruction,
     model=gemini_model,
 )
 
 # 3. Advisor
 advisor_agent = Agent(
     name="Advisor",
-    instructions=(
-        "You are the Advisor, acting as an experienced mechanic dad. Your job is to score each car, "
-        "provide detailed reasoning on why this car is recommended or not, and use a RAG implementation "
-        "to retrieve vehicle reliability records, common mechanical failure points, and technical specifications. "
-        "Provide factual and practical evaluations without any conversational personality."
-    ),
+    instructions=advisor_instruction,
     model=gemini_model,
 )
 
 # 4. Notifier
 notifier_agent = Agent(
     name="Notifier",
-    instructions=(
-        "You are the Notifier. Your job is to notify users about matched and approved car listings. "
-        "Deliver clear, direct, and formatted alerts and summaries to users without any conversational personality."
-    ),
+    instructions=notifier_instruction,
     model=gemini_model,
 )
 
@@ -92,12 +85,7 @@ notifier_tool = notifier_agent.as_tool(
 # 5. Orchestra Conductor
 conductor_agent = Agent(
     name="Orchestra Conductor",
-    instructions=(
-        "You are the orchestra conductor. Your job is to orchestrate and coordinate "
-        "the workflow among the specialized car search agents: Watcher, Matcher, Advisor, "
-        "and Notifier. Manage the full pipeline from finding listings, filtering them against "
-        "user preferences, scoring and mechanical evaluation, to delivering notifications."
-    ),
+    instructions=conductor_instruction,
     model=gemini_model,
     tools=[watcher_tool, matcher_tool, advisor_tool, notifier_tool],
 )
@@ -110,3 +98,12 @@ matcher = matcher_agent
 advisor = advisor_agent
 notifier = notifier_agent
 agent = conductor_agent
+
+async def main():
+    result = await Runner.run(watcher, "scrape a 2017 corolla in san antonio tx for less than 12000")
+    return result.final_output
+    
+        
+
+asyncio.run(main())
+
