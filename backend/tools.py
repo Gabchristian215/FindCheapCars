@@ -5,18 +5,32 @@ from agents import function_tool
 
 
 @function_tool
-def ScrapeCar(location: str, price: int):
-    """Scrape Craigslist for car listings based on location and price.
+def ScrapeCar(location: str, max_price: int | None = None, make: str | None = None, model: str | None = None):
+    """
+    Scrape Craigslist for car listings based on location and price.
     Args:
         location: The location to search for car listings.
         price: The maximum price to search for car listings.
     Returns:
         A list of car listings.
     """
-    
-    url = f"https://www.craigslist.org/search/area/{location}?cat=cta&max_price={price}#search=2~gallery~0"
+    # Filter search to cars and trucks only ("cta" = cars & trucks - all)
+    params = {"cat": "cta"}
 
-    response = requests.get(url)
+   # Add max price filter if provided
+    if max_price is not None:
+        params["max_price"] = max_price
+
+# Add make/model filter if provided (handles "Honda Civic", just "Toyota", or just "Civic")
+    if make or model:
+        params["auto_make_model"] = " ".join(
+            value for value in [make, model] if value
+        )
+
+    url = f"https://www.craigslist.org/search/area/{location}"
+    response = requests.get(url, params=params, timeout=15)
+    response.raise_for_status()
+
     html = response.text
 
     soup = BeautifulSoup(html, "lxml")
@@ -39,6 +53,7 @@ def ScrapeCar(location: str, price: int):
 
     return cars
 
+print(ScrapeCar("miami", 2000))
 """
 def print_car_results(cars: list[dict]):
     print(f"\n{'=' * 70}")
