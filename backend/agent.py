@@ -67,9 +67,10 @@ notifier = notifier_agent
 
 
 async def main():
-    result = await Runner.run(watcher, "scrap car in newyork for less than 2000")
+    user_query = "scrap car in newyork for less than 2000"
+    result = await Runner.run(watcher, user_query)
     listings = result.final_output
-    choices = await Runner.run(matcher, listings)
+    choices = await Runner.run(matcher, f"User Request: {user_query}\n\nListings from scraper:\n{listings}")
     return choices
 
 
