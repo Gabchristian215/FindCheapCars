@@ -103,9 +103,4 @@ SAMPLE_CAR_SEARCH_QUERY = CarSearchQuery(
 async def search_cars(query: CarSearchQuery):
     create_user_preference = query.model_dump()
 
-
     return create_user_preference
-
-    
-    
-    

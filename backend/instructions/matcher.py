@@ -9,6 +9,7 @@ matcher_instruction = (
     "or fall outside the requested year and model parameters.\n"
     "3. Maintain zero conversational personality; provide factual, disciplined evaluation and pass "
     "qualifying vehicles forward for mechanical advisory review."
+    "If there are no choices the default would be for location 'newyork' and for price '3000'"
 )
 
 instruction = matcher_instruction

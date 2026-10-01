@@ -1,5 +1,4 @@
 import asyncio
-from agents import result
 import os
 
 from dotenv import load_dotenv
@@ -10,7 +9,6 @@ from instructions.watcher import watcher_instruction
 from instructions.matcher import matcher_instruction
 from instructions.advisor import advisor_instruction
 from instructions.notifier import notifier_instruction
-from instructions.conductor import conductor_instruction
 
 load_dotenv()
 
@@ -28,7 +26,7 @@ gemini_client = AsyncOpenAI(
     api_key=google_api_key,
 )
 gemini_model = OpenAIChatCompletionsModel(
-    model="gemini-3.5-flash",
+    model="gemini-3.7-flash",
     openai_client=gemini_client,
 )
 
@@ -61,49 +59,22 @@ notifier_agent = Agent(
     model=gemini_model,
 )
 
-watcher_tool = watcher_agent.as_tool(
-    tool_name="car_listing_watcher",
-    tool_description=(
-        "Find and collect new car listings from Craigslist or Facebook Marketplace."
-    ),
-)
-matcher_tool = matcher_agent.as_tool(
-    tool_name="car_listing_matcher",
-    tool_description="Filter car listings against the user's vehicle preferences.",
-)
-advisor_tool = advisor_agent.as_tool(
-    tool_name="car_mechanical_advisor",
-    tool_description=(
-        "Score car listings and evaluate reliability, mechanical risks, and specifications."
-    ),
-)
-notifier_tool = notifier_agent.as_tool(
-    tool_name="car_listing_notifier",
-    tool_description="Create clear alerts and summaries for approved car listings.",
-)
-
-# 5. Orchestra Conductor
-conductor_agent = Agent(
-    name="Orchestra Conductor",
-    instructions=conductor_instruction,
-    model=gemini_model,
-    tools=[watcher_tool, matcher_tool, advisor_tool, notifier_tool],
-)
-
-# Aliases
-orchestra_conductor = conductor_agent
-conductor = conductor_agent
+# Aliases for direct code orchestration
 watcher = watcher_agent
 matcher = matcher_agent
 advisor = advisor_agent
 notifier = notifier_agent
-agent = conductor_agent
+
 
 async def main():
-    result = await Runner.run(watcher, "scrape a 2017 corolla in san antonio tx for less than 12000")
-    return result.final_output
-    
-        
+    result = await Runner.run(watcher, "scrap car in newyork for less than 2000")
+    listings = result.final_output
+    choices = await Runner.run(matcher, listings)
+    return choices
 
-asyncio.run(main())
+
+print(asyncio.run(main()))
+
+
+
 
