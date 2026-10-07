@@ -53,7 +53,7 @@ def ScrapeCar(location: str, max_price: int | None = None, make: str | None = No
 
     return cars
 
-print(ScrapeCar("miami", 2000))
+
 """
 def print_car_results(cars: list[dict]):
     print(f"\n{'=' * 70}")
