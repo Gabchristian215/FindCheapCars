@@ -26,7 +26,7 @@ gemini_client = AsyncOpenAI(
     api_key=google_api_key,
 )
 gemini_model = OpenAIChatCompletionsModel(
-    model="gemini-3.7-flash",
+    model="gemini-3.8-flash",
     openai_client=gemini_client,
 )
 
@@ -67,14 +67,15 @@ notifier = notifier_agent
 
 
 async def main():
-    user_query = "scrap car in newyork for less than 2000"
+    user_query = "scrap car in newyork "
     result = await Runner.run(watcher, user_query)
     listings = result.final_output
     choices = await Runner.run(matcher, f"User Request: {user_query}\n\nListings from scraper:\n{listings}")
     return choices
 
 
-print(asyncio.run(main()))
+
+asyncio.run(main())
 
 
 
