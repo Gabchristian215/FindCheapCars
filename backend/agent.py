@@ -69,11 +69,17 @@ notifier = notifier_agent
 async def main():
     user_query = "scrap car in newyork "
     result = await Runner.run(watcher, user_query)
+    """
     if not result.final_output:
         print("no results")
     else:
         print(result.final_output)
-        return result.final_output
+        """
+    listing = result.final_output
+    usersPref = "car has to under $3000"
+    newList = listing + usersPref
+    userList = await Runner.run(matcher, newList)
+    print(userList)
     
 
 
