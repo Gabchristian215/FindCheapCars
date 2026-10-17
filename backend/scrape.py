@@ -11,7 +11,7 @@ def ScrapeCar(location: str, make: str | None = None, model: str | None = None, 
 
    # Add max price filter if provided
     if max_price is not None:
-        params["max_price"] = max_price
+        params["max_price"] = int(max_price)
     
     if min_year is not None:
         params["min_auto_year"] = min_year
