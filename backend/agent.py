@@ -4,11 +4,11 @@ import os
 from dotenv import load_dotenv
 from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
-from tools import ScrapeCar
-from instructions.watcher import watcher_instruction
-from instructions.matcher import matcher_instruction
-from instructions.advisor import advisor_instruction
-from instructions.notifier import notifier_instruction
+from backend.tools import ScrapeCar
+from backend.instructions.watcher import watcher_instruction
+from backend.instructions.matcher import matcher_instruction
+from backend.instructions.advisor import advisor_instruction
+from backend.instructions.notifier import notifier_instruction
 
 load_dotenv()
 
@@ -72,11 +72,5 @@ async def main():
     listings = result.final_output
     choices = await Runner.run(matcher, f"User Request: {user_query}\n\nListings from scraper:\n{listings}")
     return choices
-
-
-
-asyncio.run(main())
-
-
 
 

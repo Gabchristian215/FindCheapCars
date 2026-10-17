@@ -1,7 +1,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from models import car
+from backend.routers import controls
 
 
 app = FastAPI(
@@ -10,4 +10,12 @@ app = FastAPI(
     version="0.1.0",
 )
 
-app.include_router(car.router)
+app.include_router(controls.router)
+
+
+@app.get("/health", tags=["Health"])
+async def health_check():
+    return {
+        "status": "healthy",
+        "version": app.version,
+    }
