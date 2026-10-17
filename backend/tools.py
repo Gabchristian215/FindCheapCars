@@ -1,10 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-from agents import function_tool
 
 
-
-@function_tool
 def ScrapeCar(location: str, max_price: int | None = None, make: str | None = None, model: str | None = None):
     """
     Scrape Craigslist for car listings based on location and price.
@@ -72,5 +69,3 @@ if __name__ == "__main__":
     listings = ScrapeCar("newyork", 2000)
     print_car_results(listings)
 """
-
-# print(ScrapeCar.params_json_schema)

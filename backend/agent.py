@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
 from tools import ScrapeCar
-from instructions.watcher import watcher_instruction
 from instructions.matcher import matcher_instruction
 from instructions.advisor import advisor_instruction
 from instructions.notifier import notifier_instruction
@@ -30,29 +29,21 @@ gemini_model = OpenAIChatCompletionsModel(
     openai_client=gemini_client,
 )
 
-# 1. Watcher
-watcher_agent = Agent(
-    name="Watcher",
-    instructions=watcher_instruction,
-    model=gemini_model,
-    tools=[ScrapeCar]
-)
-
-# 2. Matcher
+# 1. Matcher
 matcher_agent = Agent(
     name="Matcher",
     instructions=matcher_instruction,
     model=gemini_model,
 )
 
-# 3. Advisor
+# 2. Advisor
 advisor_agent = Agent(
     name="Advisor",
     instructions=advisor_instruction,
     model=gemini_model,
 )
 
-# 4. Notifier
+# 3. Notifier
 notifier_agent = Agent(
     name="Notifier",
     instructions=notifier_instruction,
@@ -60,32 +51,19 @@ notifier_agent = Agent(
 )
 
 # Aliases for direct code orchestration
-watcher = watcher_agent
 matcher = matcher_agent
 advisor = advisor_agent
 notifier = notifier_agent
 
 
 async def main():
-    user_query = "scrap car in newyork "
-    result = await Runner.run(watcher, user_query)
-    """
-    if not result.final_output:
-        print("no results")
-    else:
-        print(result.final_output)
-        """
-    listing = result.final_output
-    usersPref = "car has to under $3000"
-    newList = listing + usersPref
-    userList = await Runner.run(matcher, newList)
-    print(userList)
-    
-
+    location = "newyork"
+    max_price = 3000
+    listings = ScrapeCar(location=location, max_price=max_price)
+    users_pref = f"car has to under ${max_price}"
+    new_list = f"{listings}\n{users_pref}"
+    user_list = await Runner.run(matcher, new_list)
+    print(user_list)
 
 
 asyncio.run(main())
-
-
-
-

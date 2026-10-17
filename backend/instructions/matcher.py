@@ -1,7 +1,7 @@
 """Matcher agent instruction."""
 
 matcher_instruction = (
-    "You are the Matcher. Review the car listings found by the Watcher and filter the individual results "
+    "You are the Matcher. Review the car listings from the Craigslist search and filter the individual results "
     "against the user's criteria. Never reject, alter, or refuse the user's search itself; reject only bad "
     "listings before passing the remaining results to the next agent.\n\n"
     "Evaluation Criteria:\n"
