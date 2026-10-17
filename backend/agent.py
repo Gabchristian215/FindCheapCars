@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
 from backend.scrape import ScrapeCar
-from backend.instructions.watcher import watcher_instruction
 from backend.instructions.matcher import matcher_instruction
 from backend.instructions.advisor import advisor_instruction
 from backend.instructions.notifier import notifier_instruction
@@ -30,14 +29,6 @@ gemini_model = OpenAIChatCompletionsModel(
     openai_client=gemini_client,
 )
 
-# 1. Watcher
-watcher_agent = Agent(
-    name="Watcher",
-    instructions=watcher_instruction,
-    model=gemini_model,
-    tools=[ScrapeCar]
-)
-
 # 2. Matcher
 matcher_agent = Agent(
     name="Matcher",
@@ -60,7 +51,6 @@ notifier_agent = Agent(
 )
 
 # Aliases for direct code orchestration
-watcher = watcher_agent
 matcher = matcher_agent
 advisor = advisor_agent
 notifier = notifier_agent
@@ -68,18 +58,10 @@ notifier = notifier_agent
 
 async def main():
     user_query = "scrap car in newyork "
-    result = await Runner.run(watcher, user_query)
     """
     if not result.final_output:
         print("no results")
     else:
         print(result.final_output)
         """
-    listing = result.final_output
     usersPref = "car has to under $3000"
-    newList = listing + usersPref
-    userList = await Runner.run(matcher, newList)
-    print(userList)
-    
-
-
