@@ -4,10 +4,10 @@ import os
 from dotenv import load_dotenv
 from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
-from tools import ScrapeCar
-from instructions.matcher import matcher_instruction
-from instructions.advisor import advisor_instruction
-from instructions.notifier import notifier_instruction
+from backend.scrape import ScrapeCar
+from backend.instructions.matcher import matcher_instruction
+from backend.instructions.advisor import advisor_instruction
+from backend.instructions.notifier import notifier_instruction
 
 load_dotenv()
 
@@ -65,6 +65,3 @@ async def main():
         print(result.final_output)
         """
     usersPref = "car has to under $3000"
-
-
-asyncio.run(main())
