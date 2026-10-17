@@ -54,14 +54,3 @@ notifier_agent = Agent(
 matcher = matcher_agent
 advisor = advisor_agent
 notifier = notifier_agent
-
-
-async def main():
-    user_query = "scrap car in newyork "
-    """
-    if not result.final_output:
-        print("no results")
-    else:
-        print(result.final_output)
-        """
-    usersPref = "car has to under $3000"
