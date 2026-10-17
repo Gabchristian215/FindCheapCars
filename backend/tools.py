@@ -33,7 +33,7 @@ def ScrapeCar(location: str, max_price: int | None = None, make: str | None = No
 
     html = response.text
 
-    soup = BeautifulSoup(html, "lxml")
+    soup = BeautifulSoup(html, "html.parser")
 
     results = soup.find_all("li", class_="cl-static-search-result")
     cars = []

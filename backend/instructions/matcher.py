@@ -16,6 +16,7 @@ matcher_instruction = (
     "- Return the vetted, qualifying listings in the scraper format, preserving for each listing: "
     "title, price, location, and link.\n"
     "- Maintain zero conversational filler; pass the clean matching listings forward directly for mechanical advisory review."
+    "return up to 10 listing of the list that fits user preference to not overwhelm the user"
 )
 
 instruction = matcher_instruction
