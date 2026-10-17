@@ -29,21 +29,21 @@ gemini_model = OpenAIChatCompletionsModel(
     openai_client=gemini_client,
 )
 
-# 1. Matcher
+# 2. Matcher
 matcher_agent = Agent(
     name="Matcher",
     instructions=matcher_instruction,
     model=gemini_model,
 )
 
-# 2. Advisor
+# 3. Advisor
 advisor_agent = Agent(
     name="Advisor",
     instructions=advisor_instruction,
     model=gemini_model,
 )
 
-# 3. Notifier
+# 4. Notifier
 notifier_agent = Agent(
     name="Notifier",
     instructions=notifier_instruction,
@@ -57,13 +57,14 @@ notifier = notifier_agent
 
 
 async def main():
-    location = "newyork"
-    max_price = 3000
-    listings = ScrapeCar(location=location, max_price=max_price)
-    users_pref = f"car has to under ${max_price}"
-    new_list = f"{listings}\n{users_pref}"
-    user_list = await Runner.run(matcher, new_list)
-    print(user_list)
+    user_query = "scrap car in newyork "
+    """
+    if not result.final_output:
+        print("no results")
+    else:
+        print(result.final_output)
+        """
+    usersPref = "car has to under $3000"
 
 
 asyncio.run(main())
