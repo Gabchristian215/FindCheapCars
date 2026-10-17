@@ -1,25 +1,20 @@
 import requests
 from bs4 import BeautifulSoup
-from agents import function_tool
 
 
 
-@function_tool
-def ScrapeCar(location: str, max_price: int | None = None, make: str | None = None, model: str | None = None):
-    """
-    Scrape Craigslist for car listings based on location and price.
-    Args:
-        location: The location to search for car listings.
-        price: The maximum price to search for car listings.
-    Returns:
-        A list of car listings.
-    """
+
+def ScrapeCar(location: str, make: str | None = None, model: str | None = None, max_price: int | None = None, min_year: int | None = None):
+
     # Filter search to cars and trucks only ("cta" = cars & trucks - all)
     params = {"cat": "cta"}
 
    # Add max price filter if provided
     if max_price is not None:
         params["max_price"] = max_price
+    
+    if min_year is not None:
+        params["min_auto_year"] = min_year
 
 # Add make/model filter if provided (handles "Honda Civic", just "Toyota", or just "Civic")
     if make or model:

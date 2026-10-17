@@ -28,7 +28,7 @@ class CarSearchQuery(BaseModel):
     location: Optional[str] = Field(
         default=None,
         description="City, state, or region to search within",
-        examples=["New York, NY"],
+        examples=["newyork"],
     )
     
    
@@ -41,7 +41,7 @@ class CarSearchQuery(BaseModel):
                     "model": "Civic",
                     "max_price": 10000.0,
                     "min_year": 2012,
-                    "location": "New York, NY",
+                    "location": "newyork",
                 }
             ]
         }
@@ -54,7 +54,7 @@ SAMPLE_CAR_SEARCH_QUERY = CarSearchQuery(
     model="Civic",
     max_price=10000.0,
     min_year=2012,
-    location="New York, NY",
+    location="newyork",
 
 )
 

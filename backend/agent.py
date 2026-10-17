@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
-from backend.tools import ScrapeCar
+from backend.scrape import ScrapeCar
 from backend.instructions.watcher import watcher_instruction
 from backend.instructions.matcher import matcher_instruction
 from backend.instructions.advisor import advisor_instruction
