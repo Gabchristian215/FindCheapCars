@@ -2,7 +2,6 @@ from fastapi import APIRouter
 from agents import Runner
 from backend.scrape import ScrapeCar
 from backend.models.car import CarSearchQuery
-from backend.agent import watcher, matcher
 
 router = APIRouter()
 

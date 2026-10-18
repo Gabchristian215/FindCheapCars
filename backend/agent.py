@@ -4,10 +4,8 @@ import os
 from dotenv import load_dotenv
 from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
-from backend.scrape import ScrapeCar
 from backend.instructions.matcher import matcher_instruction
 from backend.instructions.advisor import advisor_instruction
-from backend.instructions.notifier import notifier_instruction
 
 load_dotenv()
 
@@ -43,14 +41,6 @@ advisor_agent = Agent(
     model=gemini_model,
 )
 
-# 4. Notifier
-notifier_agent = Agent(
-    name="Notifier",
-    instructions=notifier_instruction,
-    model=gemini_model,
-)
-
 # Aliases for direct code orchestration
 matcher = matcher_agent
 advisor = advisor_agent
-notifier = notifier_agent
