@@ -49,23 +49,4 @@ def ScrapeCar(location: str, make: str | None = None, model: str | None = None, 
     return cars
 
 
-"""
-def print_car_results(cars: list[dict]):
-    print(f"\n{'=' * 70}")
-    print(f" Found {len(cars)} Listings")
-    print(f"{'=' * 70}\n")
 
-    for idx, car in enumerate(cars, 1):
-        print(f"[{idx:>2}] {car['title']}")
-        print(f"     Price:    {car['price']}")
-        print(f"     Location: {car['location']}")
-        print(f"     Link:     {car['link']}")
-        print(f"{'-' * 70}")
-
-
-if __name__ == "__main__":
-    listings = ScrapeCar("newyork", 2000)
-    print_car_results(listings)
-"""
-
-# print(ScrapeCar.params_json_schema)
