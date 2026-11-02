@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+import json
 
 
 
@@ -49,4 +50,6 @@ def ScrapeCar(location: str, make: str | None = None, model: str | None = None, 
     return cars
 
 
+cars = ScrapeCar("newyork", max_price=10000, min_year=2005, make="Honda")
 
+print(json.dumps(cars, indent=2))
