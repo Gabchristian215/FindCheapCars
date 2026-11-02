@@ -50,6 +50,50 @@ def ScrapeCar(location: str, make: str | None = None, model: str | None = None, 
     return cars
 
 
-cars = ScrapeCar("newyork", max_price=10000, min_year=2005, make="Honda")
 
-print(json.dumps(cars, indent=2))
+
+# print(json.dumps(cars, indent=2))
+    
+
+def is_ad(car):
+    if "we buy cars" in car["title"].lower():
+        return True
+    return False
+
+def is_credit(car):
+    keyword = ["credit", "financing available", "financing", "down payment", "monthly payment", "no deposit", "car dealer", "dealer",
+        "down"]
+    for word in keyword:
+        if word in car["title"].lower()or word in car["location"].lower():
+            return True
+    return False
+
+def is_broken(car):
+    keywords = [
+        "not running", "mechanic", "parts", "repair",
+        "as-is", "as is", "needs engine", "transmission issue"
+    ]
+    for word in keywords:
+        if word in car["title"].lower():
+            return True
+    return False
+
+def final_list(location, make, max_price, min_year, model):
+    cars = ScrapeCar(
+        location,
+        make=make,
+        max_price=max_price,
+        min_year=min_year,
+        model=model
+    )
+    matches = []
+    for car in cars:
+         if not is_ad(car) and not is_credit(car) and not is_broken(car):
+             matches.append(car)
+    return json.dumps(matches, indent=2)
+                    
+    
+            
+       
+        
+   

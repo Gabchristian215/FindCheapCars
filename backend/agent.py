@@ -1,6 +1,5 @@
-import asyncio
-import os
 
+import os
 from dotenv import load_dotenv
 from agents import Agent, OpenAIChatCompletionsModel, Runner, trace
 from openai import AsyncOpenAI
