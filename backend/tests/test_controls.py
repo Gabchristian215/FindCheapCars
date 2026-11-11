@@ -19,4 +19,6 @@ def test_missing_location():
     )
     assert response.status_code == 422
 
+    
+
  
