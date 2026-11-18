@@ -2,7 +2,9 @@ import requests
 from bs4 import BeautifulSoup
 import json
 
-
+class ApiCallFailed(Exception):
+    pass
+    
 
 
 def ScrapeCar(location: str, make: str | None = None, model: str | None = None, max_price: int | None = None, min_year: int | None = None):
@@ -88,9 +90,16 @@ def final_list(location, make, max_price, min_year, model):
     )
     matches = []
     for car in cars:
-         if not is_ad(car) and not is_credit(car) and not is_broken(car):
-             matches.append(car)
+        if not is_ad(car) and not is_credit(car) and not is_broken(car):
+            matches.append(car)
+
+    if not matches:
+        raise ApiCallFailed("Api Called Failed")
+
     return json.dumps(matches, indent=2)
+
+
+print(final_list("newyork", "Honda", 5000, 1999, "civic"))
                     
     
             
